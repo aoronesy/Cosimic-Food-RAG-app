@@ -1,4 +1,5 @@
 import json
+import re
 from collections.abc import AsyncGenerator
 from uuid import uuid4
 
@@ -12,6 +13,10 @@ from quartapp.approaches.schemas import (
     Thought,
 )
 from quartapp.config_base import AppConfigBase
+
+
+def sanitize_json_string(json_string):
+    return re.sub(r"[\x00-\x1f\x7f]", "", json_string)
 
 
 class AppConfig(AppConfigBase):
@@ -95,7 +100,9 @@ class AppConfig(AppConfigBase):
         self, session_state: str | None, messages: list, temperature: float, limit: int, score_threshold: float
     ) -> RetrievalResponse:
         rag_response, answer = await self.setup.rag.run(messages, temperature, limit, score_threshold)
-        json_answer = json.loads(answer)
+
+        sanitized_answer = sanitize_json_string(answer)
+        json_answer = json.loads(sanitized_answer)
 
         new_session_state: str = session_state if session_state else str(uuid4())
 
