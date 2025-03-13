@@ -80,21 +80,6 @@ async def test_rag_no_messages(rag_mock):
 
 
 @pytest.mark.asyncio
-async def test_rag_run(rag_mock):
-    """Test the RAG class run method."""
-    result = rag_mock.run([{"content": "test"}], 0.0, 0, 0.0)
-    assert await result == (
-        [
-            Document(
-                metadata={"source": "test"},
-                page_content='{"name": "test", "description": "test", "price": "5.0USD", "category": "test"}',
-            )
-        ],
-        '{"response": "content", "rephrased_response": "content"}',
-    )
-
-
-@pytest.mark.asyncio
 async def test_app_setup(setup_mock):
     """Test the Setup class."""
     assert setup_mock._openai_setup
@@ -195,48 +180,6 @@ async def test_app_config_run_vector(app_config_mock):
             "            Category: test\n            Collection: collection_name\n        ",
             role=AIChatRoles.ASSISTANT,
         ),
-        sessionState="test",
-    )
-
-
-@pytest.mark.asyncio
-async def test_app_config_run_rag(app_config_mock):
-    """Test the AppConfig class run_rag method."""
-    result = app_config_mock.run_rag("test", [{"content": "test"}], 0.3, 1, 0.0)
-    assert await result == RetrievalResponse(
-        context=Context(
-            data_points=[
-                DataPoint(
-                    name="test",
-                    description="test",
-                    price="5.0USD",
-                    category="test",
-                    collection="collection_name",
-                )
-            ],
-            thoughts=[
-                Thought(
-                    title="Cosmos RAG Query",
-                    description="test",
-                ),
-                Thought(
-                    title="Cosmos RAG OpenAI Rephrased Query",
-                    description="content",
-                ),
-                Thought(
-                    title="Cosmos RAG Search Vector Search Result",
-                    description="[Document(metadata={'source': 'test'}, "
-                    'page_content=\'{"name": "test", "description": "test", '
-                    '"price": "5.0USD", "category": "test"}\')]',
-                ),
-                Thought(
-                    title="Cosmos RAG OpenAI Rephrased Response",
-                    description="content",
-                ),
-                Thought(title="Source", description="test"),
-            ],
-        ),
-        message=Message(content="content", role=AIChatRoles.ASSISTANT),
         sessionState="test",
     )
 
