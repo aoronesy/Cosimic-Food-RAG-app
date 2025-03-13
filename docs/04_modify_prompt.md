@@ -13,6 +13,7 @@
 * 指示は明確か？
 * 回答のスタイルが指定されているか？
 * フォールバックメカニズムは実装されているか？
+* [Azure OpenAIのコンテンツ管理ポリシー](https://learn.microsoft.com/ja-jp/azure/ai-services/openai/concepts/default-safety-policies)にのっとっているか？
 
 ### プロンプト例
 
