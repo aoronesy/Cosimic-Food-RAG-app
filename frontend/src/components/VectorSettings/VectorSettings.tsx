@@ -28,11 +28,7 @@ export const VectorSettings = ({ updateRetrievalMode, defaultRetrievalMode }: Pr
                 id={retrievalModeFieldId}
                 label="検索モード"
                 selectedKey={defaultRetrievalMode.toString()}
-                options={[
-                    { key: "rag", text: "RAG with Vector Search", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
-                    { key: "vector", text: "Vector Search", selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
-                    { key: "keyword", text: "Keyword Search", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
-                ]}
+                options={[{ key: "keyword", text: "Keyword Search", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }]}
                 required
                 onChange={onRetrievalModeChange}
                 aria-labelledby={retrievalModeId}
