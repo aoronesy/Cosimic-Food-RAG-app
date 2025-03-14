@@ -133,6 +133,19 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
   }
 }
 
+module documentIntelligence 'core/ai/documentInteligence.bicep' = {
+  name: 'documentinteligence'
+  scope: resourceGroup
+  params: {
+    name: openAIDeploymentName
+    location: location
+    tags: tags
+    vnetId: vnetIntegration ? vnet.outputs.vnetId : ''
+    logAnalyticsWorkspaceId: !empty(platformSubscriptionId) ? monitoringResource.outputs.logAnalyticsWorkspaceId : ''
+    subnetId: vnetIntegration ? vnet.outputs.pepSubnetId : ''
+  }
+}
+
 module cognitiveServiceSecret './app/key-vault-secrets.bicep' = {
   name: 'keyvaultsecret-cognitiveservice'
   scope: resourceGroup
