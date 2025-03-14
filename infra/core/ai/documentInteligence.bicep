@@ -5,14 +5,13 @@ param tags object = {}
 param vnetId string = ''
 param subnetId string = ''
 param logAnalyticsWorkspaceId string = ''
-param enableMetrics bool = true
 
 
 resource documentIntelligence 'Microsoft.CognitiveServices/accounts@2024-10-01' = if (!empty(vnetId) && !empty(subnetId)) {
   name: name
   location: 'japaneast'
   sku: {
-    name: 'F0'
+    name: 'S0'
   }
   kind: 'FormRecognizer'
   identity: {
@@ -34,14 +33,30 @@ resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-pr
   scope: documentIntelligence
   properties: {
     workspaceId: logAnalyticsWorkspaceId
-    metrics: enableMetrics
-      ? [
-          {
-            category: 'AllMetrics'
-            enabled: true
-          }
-        ]
-      : []
+    logs: [
+      {
+        category: 'Audit'
+        enabled: true
+      }
+      {
+        category: 'RequestResponse'
+        enabled: true
+      }
+      {
+        category: 'Trace'
+        enabled: true
+      }
+      {
+        category: 'AzureOpenAIRequestUsage'
+        enabled: true
+      }
+    ]
+    metrics: [
+      {
+        category: 'AllMetrics'
+        enabled: true
+      }
+    ]
   }
 }
 
@@ -79,7 +94,7 @@ resource privateEndpointAoai 'Microsoft.Network/privateEndpoints@2023-04-01' = i
         properties: {
           privateLinkServiceId: documentIntelligence.id
           groupIds: [
-            'documentintelligence'
+            'account'
           ]
         }
       }
