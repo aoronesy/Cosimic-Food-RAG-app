@@ -24,6 +24,8 @@ param openAIDeploymentName string = 'oai-${name}'
 param chatGptDeploymentName string = 'chat-gpt'
 param chatGptDeploymentCapacity int = 6
 param chatGptModelName string = 'gpt-35-turbo'
+param documentIntelligenceDeploymentName string = 'documentintelligence-${name}'
+
 /*
 The version of the model to use. This should be updated to the latest version available.
 For more information, see:
@@ -33,7 +35,6 @@ param chatGptModelVersion string = '0125'
 param embeddingDeploymentName string = 'text-embedding'
 param embeddingDeploymentCapacity int = 30
 param embeddingModelName string = 'text-embedding-ada-002'
-
 param platformSubscriptionId string = ''
 param lawRgName string = ''
 param lawName string = ''
@@ -137,7 +138,7 @@ module documentIntelligence 'core/ai/documentInteligence.bicep' = {
   name: 'documentinteligence'
   scope: resourceGroup
   params: {
-    name: openAIDeploymentName
+    name: documentIntelligenceDeploymentName
     location: location
     tags: tags
     vnetId: vnetIntegration ? vnet.outputs.vnetId : ''

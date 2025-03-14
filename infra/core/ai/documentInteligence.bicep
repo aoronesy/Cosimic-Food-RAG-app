@@ -8,7 +8,7 @@ param logAnalyticsWorkspaceId string = ''
 param enableMetrics bool = true
 
 
-resource documentIntelligence 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
+resource documentIntelligence 'Microsoft.CognitiveServices/accounts@2024-10-01' = if (!empty(vnetId) && !empty(subnetId)) {
   name: name
   location: 'japaneast'
   sku: {
@@ -79,7 +79,7 @@ resource privateEndpointAoai 'Microsoft.Network/privateEndpoints@2023-04-01' = i
         properties: {
           privateLinkServiceId: documentIntelligence.id
           groupIds: [
-            'documentIntelligence'
+            'documentintelligence'
           ]
         }
       }
