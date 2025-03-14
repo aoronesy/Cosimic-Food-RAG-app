@@ -59,7 +59,6 @@ param enableUnauthenticatedAccess bool = false
 param logAnalyticsWorkspaceId string = ''
 param actionGroupId string = ''
 
-param mongoClusterName string = ''
 param openAIDeploymentName string = ''
 
 var msftAllowedOrigins = ['https://portal.azure.com', 'https://ms.portal.azure.com']
@@ -274,10 +273,6 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' existing
   name: applicationInsightsName
 }
 
-resource mognoCluster 'Microsoft.DocumentDB/mongoClusters@2024-02-15-preview' existing = if (!empty(mongoClusterName)) {
-  name: mongoClusterName
-}
-
 resource cognitiveServices 'Microsoft.CognitiveServices/accounts@2023-05-01' existing = if (!empty(openAIDeploymentName)) {
   name: openAIDeploymentName
 }
@@ -287,21 +282,6 @@ resource cognitiveServices 'Microsoft.CognitiveServices/accounts@2023-05-01' exi
 resource cognitiveServicesRoleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = if (!empty(openAIDeploymentName)) {
   scope: subscription()
   name: '25fbc0a9-bd7c-42a3-aa1a-3b75d497ee68' // CognitiveServices共同作成者ロールID
-}
-
-resource mongoClusterRoleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = if (!empty(mongoClusterName)) {
-  scope: subscription()
-  name: '5bd9cd88-fe45-4216-938b-f97437e15450' // DocumentDB Account ContributorロールID
-}
-
-resource roleAssignmentMongoCluster 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (!empty(mongoClusterName)) {
-  scope: mognoCluster
-  name: guid(mognoCluster.id, mongoClusterRoleDefinition.id)
-  properties: {
-    roleDefinitionId: mongoClusterRoleDefinition.id
-    principalId: appService.identity.principalId
-    principalType: 'ServicePrincipal'
-  }
 }
 
 resource roleAssignmentCognitiveServices 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (!empty(openAIDeploymentName)) {

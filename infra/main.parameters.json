@@ -21,7 +21,7 @@
       "value": "${AZURE_MONGO_SERVICE_SKU=M40}"
     },
     "vnetIntegration":{
-      "value": false
+      "value": true
     },
     "platformSubscriptionId": {
       "value": ""
@@ -38,7 +38,7 @@
     "alertEmails": {
       "value": [
         {
-          "emailAddress": "test.user@testcompany.com",
+          "emailAddress": "",
           "name": "TestUser-EmailAction",
           "useCommonAlertSchema": "true"
         }
