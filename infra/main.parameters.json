@@ -21,10 +21,10 @@
       "value": "${AZURE_MONGO_SERVICE_SKU=M40}"
     },
     "vnetIntegration":{
-      "value": false
+      "value": true
     },
     "platformSubscriptionId": {
-      "value": ""
+      "value": "6fdbcd22-d359-4566-8406-262075ae3e97"
     },
     "lawRgName": {
       "value": "rg-common-law"
@@ -38,7 +38,7 @@
     "alertEmails": {
       "value": [
         {
-          "emailAddress": "test.user@testcompany.com",
+          "emailAddress": "k-nakayashiki@alterbooth.com",
           "name": "TestUser-EmailAction",
           "useCommonAlertSchema": "true"
         }

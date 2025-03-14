@@ -3,9 +3,6 @@ param location string = resourceGroup().location
 param applicationInsightsName string = ''
 param hostingPlanId string
 param tags object = {}
-param mongoConnectionString string
-param azureCosmosPassword string
-param azureCosmosUsername string
 param azureOpenAiApiKey string
 param azureOpenAiEndpoint string
 param azureOpenAiDeploymentName string
@@ -67,36 +64,6 @@ var baseAppSettings = [
   {
     name: 'WEBSITE_CONTENTSHARE'
     value: toLower(functionName)
-    slotSetting: false
-  }
-  {
-    name:'AZURE_COSMOS_COLLECTION_NAME'
-    value:'CosmicFoodCollection'
-    slotSetting: false
-  }
-  {
-    name:'AZURE_COSMOS_CONNECTION_STRING'
-    value:mongoConnectionString
-    slotSetting: false
-  }
-  {
-    name:'AZURE_COSMOS_DB_NAME'
-    value:'CosmicDB'
-    slotSetting: false
-  }
-  {
-    name:'AZURE_COSMOS_INDEX_NAME'
-    value:'CosmicIndex'
-    slotSetting: false
-  }
-  {
-    name:'AZURE_COSMOS_PASSWORD'
-    value:azureCosmosPassword
-    slotSetting: false
-  }
-  {
-    name:'AZURE_COSMOS_USERNAME'
-    value:azureCosmosUsername
     slotSetting: false
   }
   {
