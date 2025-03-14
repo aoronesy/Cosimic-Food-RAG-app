@@ -173,3 +173,5 @@ When azd has finished deploying, you'll see an endpoint URI in the command outpu
     pip install -e .
     python ./scripts/add_data.py  --file="./data/food_items.json"
     ```
+
+    staging
