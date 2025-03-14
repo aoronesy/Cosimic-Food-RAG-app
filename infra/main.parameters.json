@@ -24,7 +24,7 @@
       "value": true
     },
     "platformSubscriptionId": {
-      "value": "6fdbcd22-d359-4566-8406-262075ae3e97"
+      "value": ""
     },
     "lawRgName": {
       "value": "rg-common-law"
@@ -38,7 +38,7 @@
     "alertEmails": {
       "value": [
         {
-          "emailAddress": "k-nakayashiki@alterbooth.com",
+          "emailAddress": "",
           "name": "TestUser-EmailAction",
           "useCommonAlertSchema": "true"
         }
