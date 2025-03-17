@@ -36,16 +36,19 @@
    param actionGroupEmail = <全サブスクリプション共通アラートの送付先メールアドレス>
    ```
 
-4. 以下のコマンドを実行してデプロイ
+4. テナントにログインしているユーザーに対して所有者権限の昇格を行うコマンドを実行する
+   ```bash
+   az role assignment create --assignee $(az ad signed-in-user show --query id --output tsv) --scope "/" --role "Owner"
+   ```
+   権限の昇格をしたら以下のコマンドを実行する
 
    ```bash
    az deployment mg create --template-file main.bicep \
    --location $region --management-group-id $rootGroupId \
    --parameters main.bicepparam
-
    ```
 
-5. 動作確認
+6. 動作確認
    以下のキャプチャの通り作成された管理グループ下にサブスクリプションが紐づいている事を確認する
    ![管理グループとサブスクリプションの紐づけ確認](../governance/docs/動作確認.png)
 
@@ -125,15 +128,27 @@
 8. 以下のコマンドでデプロイ
 
    ```bash
-   azd up
+   azd provision
    ```
 
    作成するサブスクリプションとリージョンを選択してデプロイをおこないます。
 
    - リージョン: japaneast
    - サブスクリプション: 運用基盤サブスクリプション
+  
+   8の終了後、先に01_branch_strategyの手順でアプリのデプロイをGitHubActionsで行った後に9の手順に進みます。
+    
+   デプロイの際にAzure OpenAIのデプロイに失敗する場合はAzure OpenAIのリソース・Azure OpenAIに関連するプライベートDNSゾーンを削除して再度```azd provision```でデプロイしなおしてください。  
+   Azure OpenAIを削除しなおす際は以下の画面にある「削除されたリソースの管理」に削除したAzure OpenAIリソースが残っているため、こちらの削除も行う必要があります。
+   
+   ![image](https://github.com/user-attachments/assets/bd1c4651-f2ff-4533-ad17-c8b9268afe6b)
+   
 
-9. データの追加
+   MongoDBのデプロイに失敗する場合は、デプロイに失敗したMongoDBのリソースを削除し、一度ポータルで別リージョンに手動でMongoDBを作成します。
+   その後、手動作成したMongoDBを削除して、再度```azd provision```でデプロイしなおしてください。  
+
+
+10. データの追加
    MongoDB に RAG 用のデータを追加します。
 
    - WebApp の SSH ターミナルにアクセスします。
@@ -145,7 +160,7 @@
      python ./scripts/add_data.py  --file="./data/food_items.json"
      ```
 
-10. 動作確認
+11. 動作確認
 
    webapp の URL にアクセスして動作確認を行います。
 
