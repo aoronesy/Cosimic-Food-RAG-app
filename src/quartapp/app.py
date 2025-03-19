@@ -1,4 +1,3 @@
-from opencensus.ext.azure.log_exporter import AzureLogHandler
 import logging
 from collections.abc import AsyncGenerator
 from json import dumps
@@ -10,20 +9,12 @@ from quart import Quart, Response, jsonify, make_response, request, send_file, s
 from quartapp.approaches.schemas import RetrievalResponse, RetrievalResponseDelta
 from quartapp.config import AppConfig
 
-# logging.basicConfig(
-#     handlers=[logging.StreamHandler()],
-#     format="[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s",
-#     level=logging.INFO,
-# )
+logging.basicConfig(
+    handlers=[logging.StreamHandler()],
+    format="[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s",
+    level=logging.INFO,
+)
 
-# ログ出力は後で削除
-# Application Insightsの接続文字列
-APPINSIGHTS_CONNECTION_STRING = "InstrumentationKey=977fc52f-78e4-4a14-8615-e217e6423a1f;IngestionEndpoint=https://japaneast-1.in.applicationinsights.azure.com/;LiveEndpoint=https://japaneast.livediagnostics.monitor.azure.com/;ApplicationId=9d9f83ee-727c-4d37-8095-340e73722c40"
-
-# ロガーの設定
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger.addHandler(AzureLogHandler(connection_string=APPINSIGHTS_CONNECTION_STRING))
 
 async def format_as_ndjson(r: AsyncGenerator[RetrievalResponseDelta, None]) -> AsyncGenerator[str, None]:
     """
@@ -33,7 +24,7 @@ async def format_as_ndjson(r: AsyncGenerator[RetrievalResponseDelta, None]) -> A
         async for event in r:
             yield dumps(event.to_dict(), ensure_ascii=False) + "\n"
     except Exception as error:
-        #logging.exception("Exception while generating response stream: %s", error)
+        logging.exception("Exception while generating response stream: %s", error)
         yield dumps({"error": str(error)}, ensure_ascii=False) + "\n"
 
 
@@ -73,28 +64,23 @@ def create_app(test_config: dict[str, Any] | None = None) -> Quart:
     @app.route("/chat", methods=["POST"])
     async def chat() -> Any:
         if not request.is_json:
-            logger.warning("Invalid request: not JSON")
             return jsonify({"error": "request must be json"}), 415
 
         # Get the request body
         body = await request.get_json()
 
         if not body:
-            logger.warning("Invalid request: empty body")
             return jsonify({"error": "request body is empty"}), 400
 
         # Get the request message
         messages: list = body.get("messages", [])
 
         if not messages and len(messages) == 0:
-            logger.warning("Invalid request: no messages provided")
             return jsonify({"error": "request must have a message"}), 400
 
         # Get the request session_state, context from the request body
         session_state = body.get("sessionState", None)
         context = body.get("context", {})
-        
-        logger.info("Processing chat request", extra={"custom_dimensions": {"messages": messages, "session_state": session_state, "context": context}})
 
         # Get the overrides from the context
         override = context.get("overrides", {})
