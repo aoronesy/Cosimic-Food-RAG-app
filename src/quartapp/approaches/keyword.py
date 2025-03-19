@@ -23,4 +23,4 @@ class KeyWord(ApproachesBase):
         documents_list.append(
             Document(page_content=query)
         )
-        return [], ""
+        return documents_list, documents_list[0].page_content
