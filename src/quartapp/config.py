@@ -59,12 +59,12 @@ class AppConfig(AppConfigBase):
         # context.thoughts.insert(0, Thought(description=messages[-1]["content"], title="Cosmos Text Search Query"))
         message: Message = Message(content=message_content, role=AIChatRoles.ASSISTANT)
 
-        await self.add_to_cosmos(
-            old_messages=messages,
-            new_message=message.to_dict(),
-            session_state=session_state,
-            new_session_state=new_session_state,
-        )
+        # await self.add_to_cosmos(
+        #     old_messages=messages,
+        #     new_message=message.to_dict(),
+        #     session_state=session_state,
+        #     new_session_state=new_session_state,
+        # )
 
         return RetrievalResponse(context, message, new_session_state)
 
