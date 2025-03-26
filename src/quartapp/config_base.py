@@ -96,7 +96,7 @@ class AppConfigBase(ABC):
             json_data_point.description = raw_data.get("description")
             json_data_point.price = raw_data.get("price")
             json_data_point.category = raw_data.get("category")
-            #json_data_point.collection = self.setup._database_setup._collection_name
+            # json_data_point.collection = self.setup._database_setup._collection_name
             data_points.append(json_data_point)
         return data_points
 
@@ -110,10 +110,10 @@ class AppConfigBase(ABC):
     #     self, session_state: str | None, messages: list, temperature: float, limit: int, score_threshold: float
     # ) -> RetrievalResponse: ...
 
-    # @abstractmethod
-    # async def run_rag(
-    #     self, session_state: str | None, messages: list, temperature: float, limit: int, score_threshold: float
-    # ) -> RetrievalResponse: ...
+    @abstractmethod
+    async def run_rag(
+        self, session_state: str | None, messages: list, temperature: float, limit: int, score_threshold: float
+    ) -> RetrievalResponse: ...
 
     @abstractmethod
     async def run_keyword(
