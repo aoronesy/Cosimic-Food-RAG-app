@@ -1,6 +1,5 @@
 import json
 import re
-from collections.abc import AsyncGenerator
 from uuid import uuid4
 
 from quartapp.approaches.schemas import (
@@ -9,7 +8,6 @@ from quartapp.approaches.schemas import (
     DataPoint,
     Message,
     RetrievalResponse,
-    RetrievalResponseDelta,
     Thought,
 )
 from quartapp.config_base import AppConfigBase
@@ -30,7 +28,7 @@ class AppConfig(AppConfigBase):
         print(f"keyword_response: {keyword_response}")
         print(f"answer: {answer}")
         print(f"new_session_state: {new_session_state}")
-        
+
         if keyword_response is None or len(keyword_response) == 0:
             return RetrievalResponse(
                 sessionState=new_session_state,
@@ -106,51 +104,51 @@ class AppConfig(AppConfigBase):
 
     #     return RetrievalResponse(context, message, new_session_state)
 
-    # async def run_rag(
-    #     self, session_state: str | None, messages: list, temperature: float, limit: int, score_threshold: float
-    # ) -> RetrievalResponse:
-    #     rag_response, answer = await self.setup.rag.run(messages, temperature, limit, score_threshold)
+    async def run_rag(
+        self, session_state: str | None, messages: list, temperature: float, limit: int, score_threshold: float
+    ) -> RetrievalResponse:
+        rag_response, answer = await self.setup.rag.run(messages, temperature, limit, score_threshold)
 
-    #     sanitized_answer = sanitize_json_string(answer)
-    #     json_answer = json.loads(sanitized_answer)
+        sanitized_answer = sanitize_json_string(answer)
+        json_answer = json.loads(sanitized_answer)
 
-    #     new_session_state: str = session_state if session_state else str(uuid4())
+        new_session_state: str = session_state if session_state else str(uuid4())
 
-    #     if rag_response is None or len(rag_response) == 0:
-    #         if answer:
-    #             return RetrievalResponse(
-    #                 sessionState=new_session_state,
-    #                 context=Context([DataPoint()], [Thought()]),
-    #                 message=Message(content=json_answer.get("response"), role=AIChatRoles.ASSISTANT),
-    #             )
-    #         else:
-    #             return RetrievalResponse(
-    #                 sessionState=new_session_state,
-    #                 context=Context([DataPoint()], [Thought()]),
-    #                 message=Message(content="No results found", role=AIChatRoles.ASSISTANT),
-    #             )
+        if rag_response is None or len(rag_response) == 0:
+            if answer:
+                return RetrievalResponse(
+                    sessionState=new_session_state,
+                    context=Context([DataPoint()], [Thought()]),
+                    message=Message(content=json_answer.get("response"), role=AIChatRoles.ASSISTANT),
+                )
+            else:
+                return RetrievalResponse(
+                    sessionState=new_session_state,
+                    context=Context([DataPoint()], [Thought()]),
+                    message=Message(content="No results found", role=AIChatRoles.ASSISTANT),
+                )
 
-    #     context: Context = await self.get_context(rag_response)
-    #     context.thoughts.insert(
-    #         0, Thought(description=json_answer.get("response"), title="Cosmos RAG OpenAI Rephrased Response")
-    #     )
-    #     context.thoughts.insert(
-    #         0, Thought(description=str(rag_response), title="Cosmos RAG Search Vector Search Result")
-    #     )
-    #     context.thoughts.insert(
-    #         0, Thought(description=json_answer.get("rephrased_response"), title="Cosmos RAG OpenAI Rephrased Query")
-    #     )
-    #     context.thoughts.insert(0, Thought(description=messages[-1]["content"], title="Cosmos RAG Query"))
-    #     message: Message = Message(content=json_answer.get("response"), role=AIChatRoles.ASSISTANT)
+        context: Context = await self.get_context(rag_response)
+        context.thoughts.insert(
+            0, Thought(description=json_answer.get("response"), title="Cosmos RAG OpenAI Rephrased Response")
+        )
+        context.thoughts.insert(
+            0, Thought(description=str(rag_response), title="Cosmos RAG Search Vector Search Result")
+        )
+        context.thoughts.insert(
+            0, Thought(description=json_answer.get("rephrased_response"), title="Cosmos RAG OpenAI Rephrased Query")
+        )
+        context.thoughts.insert(0, Thought(description=messages[-1]["content"], title="Cosmos RAG Query"))
+        message: Message = Message(content=json_answer.get("response"), role=AIChatRoles.ASSISTANT)
 
-    #     await self.add_to_cosmos(
-    #         old_messages=messages,
-    #         new_message=message.to_dict(),
-    #         session_state=session_state,
-    #         new_session_state=new_session_state,
-    #     )
+        # await self.add_to_cosmos(
+        #     old_messages=messages,
+        #     new_message=message.to_dict(),
+        #     session_state=session_state,
+        #     new_session_state=new_session_state,
+        # )
 
-    #     return RetrievalResponse(context, message, new_session_state)
+        return RetrievalResponse(context, message, new_session_state)
 
     # async def run_rag_stream(
     #     self, session_state: str | None, messages: list, temperature: float, limit: int, score_threshold: float

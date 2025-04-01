@@ -97,40 +97,40 @@ class RAG(ApproachesBase):
         self, messages: list, temperature: float, limit: int, score_threshold: float
     ) -> tuple[list[Document], AsyncIterator[BaseMessage]]:
         # Create a vector store retriever
-        retriever = self._vector_store.as_retriever(
-            search_type="similarity", search_kwargs={"k": limit, "score_threshold": score_threshold}
-        )
+        # retriever = self._vector_store.as_retriever(
+        #    search_type="similarity", search_kwargs={"k": limit, "score_threshold": score_threshold}
+        # )
 
         self._chat.temperature = 0.3
 
         # Create a vector context aware chat retriever
         rephrase_prompt_template = ChatPromptTemplate.from_template(REPHRASE_PROMPT)
         rephrase_chain = rephrase_prompt_template | self._chat
-
+        #
         # Rephrase the question
         rephrased_question = await rephrase_chain.ainvoke({"chat_history": messages[:-1], "question": messages[-1]})
 
         print(rephrased_question.content)
         # Perform vector search
-        vector_context = await retriever.ainvoke(str(rephrased_question.content))
-        data_points: list[DataPoint] = get_data_points(vector_context)
+        # vector_context = await retriever.ainvoke(str(rephrased_question.content))
+        # data_points: list[DataPoint] = get_data_points(vector_context)
 
         # Create a vector context aware chat retriever
         context_prompt_template = ChatPromptTemplate.from_template(CONTEXT_PROMPT)
         self._chat.temperature = temperature
         context_chain = context_prompt_template | self._chat
-        documents_list: list[Document] = []
+        # documents_list: list[Document] = []
 
-        if data_points:
-            # Perform RAG search
-            response = context_chain.astream(
-                {"context": [dp.to_dict() for dp in data_points], "input": rephrased_question.content}
-            )
-            for document in vector_context:
-                documents_list.append(
-                    Document(page_content=document.page_content, metadata={"source": document.metadata["source"]})
-                )
-            return documents_list, response
+        # if data_points:
+        #     # Perform RAG search
+        #     response = context_chain.astream(
+        #         {"context": [dp.to_dict() for dp in data_points], "input": rephrased_question.content}
+        #     )
+        #     for document in vector_context:
+        #         documents_list.append(
+        #             Document(page_content=document.page_content, metadata={"source": document.metadata["source"]})
+        #         )
+        #     return documents_list, response
 
         # Perform RAG search with no context
         response = context_chain.astream({"context": [], "input": rephrased_question.content})

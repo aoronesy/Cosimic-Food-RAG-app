@@ -4,7 +4,9 @@ from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
 from pydantic import SecretStr
 
 from quartapp.approaches.keyword import KeyWord
-#from quartapp.approaches.rag import RAG
+from quartapp.approaches.rag import RAG
+
+# from quartapp.approaches.rag import RAG
 from quartapp.approaches.utils import (
     chat_api,
     embeddings_api,
@@ -13,7 +15,7 @@ from quartapp.approaches.utils import (
 # setup_data_collection,
 # setup_users_collection,
 # vector_store_api,
-#from quartapp.approaches.vector import Vector
+# from quartapp.approaches.vector import Vector
 
 
 class OpenAISetup(ABC):
@@ -93,18 +95,18 @@ class Setup(ABC):
         #     ),
         # )
 
-        #self.vector_search = Vector(
+        # self.vector_search = Vector(
         #     vector_store=self._database_setup._vector_store_api,
         #     embedding=self._openai_setup._embeddings_api,
         #     chat=self._openai_setup._chat_api,
         #     data_collection=self._database_setup._data_collection,
         # )
-        # self.rag = RAG(
-        #     vector_store=self._database_setup._vector_store_api,
-        #     embedding=self._openai_setup._embeddings_api,
-        #     chat=self._openai_setup._chat_api,
-        #     data_collection=self._database_setup._data_collection,
-        #)
+        self.rag = RAG(
+            # vector_store=None,# self._database_setup._vector_store_api,
+            embedding=self._openai_setup._embeddings_api,
+            chat=self._openai_setup._chat_api,
+            # data_collection=None#self._database_setup._data_collection,
+        )
         # self.keyword = KeyWord(
         #     vector_store=self._database_setup._vector_store_api,
         #     embedding=self._openai_setup._embeddings_api,
@@ -112,6 +114,6 @@ class Setup(ABC):
         #     data_collection=self._database_setup._data_collection,
         # )
         self.keyword = KeyWord(
-             embedding=self._openai_setup._embeddings_api,
-             chat=self._openai_setup._chat_api,
+            embedding=self._openai_setup._embeddings_api,
+            chat=self._openai_setup._chat_api,
         )
