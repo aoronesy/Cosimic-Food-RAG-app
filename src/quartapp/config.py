@@ -1,5 +1,6 @@
 import json
 import re
+import os
 from uuid import uuid4
 
 import openai
@@ -189,12 +190,12 @@ class AppConfig(AppConfigBase):
         try:
             client = openai.AsyncAzureOpenAI(
                 api_key=os.environ.get("AZURE_OPENAI_API_KEY"),
-                api_version=os.environ.get("OPENAI_API_VERSION", "2023-09-15-preview"),
+                api_version=os.environ.get("OPENAI_API_VERSION", "2025-01-01-preview"),
                 azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT", ""),
             )
 
             response = await client.chat.completions.create(
-                model=os.environ.get("AZURE_OPENAI_GPT4_DEPLOYMENT_NAME", "gpt-4o"),
+                model=os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME", "chat-gpt"),
                 messages=messages,
                 temperature=temperature,
             )
