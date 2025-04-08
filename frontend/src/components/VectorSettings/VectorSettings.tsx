@@ -13,13 +13,13 @@ interface Props {
 }
 
 export const VectorSettings = ({ updateRetrievalMode, defaultRetrievalMode }: Props) => {
-    const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Text);
+    const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.GPT4O);
     const retrievalModeId = useId("retrievalMode");
     const retrievalModeFieldId = useId("retrievalModeField");
 
     const onRetrievalModeChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<RetrievalMode> | undefined) => {
-        setRetrievalMode(option?.data || RetrievalMode.Text);
-        updateRetrievalMode(option?.data || RetrievalMode.Text);
+        setRetrievalMode(option?.data || RetrievalMode.GPT4O);
+        updateRetrievalMode(option?.data || RetrievalMode.GPT4O);
     };
 
     return (
@@ -28,7 +28,7 @@ export const VectorSettings = ({ updateRetrievalMode, defaultRetrievalMode }: Pr
                 id={retrievalModeFieldId}
                 label="検索モード"
                 selectedKey={defaultRetrievalMode.toString()}
-                options={[{ key: "keyword", text: "Keyword Search", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }]}
+                options={[{ key: "gpt4o", text: "GPT-4oでの評価", selected: retrievalMode == RetrievalMode.GPT4O, data: RetrievalMode.GPT4O }]}
                 required
                 onChange={onRetrievalModeChange}
                 aria-labelledby={retrievalModeId}

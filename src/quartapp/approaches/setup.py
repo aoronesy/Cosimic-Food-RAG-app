@@ -3,10 +3,9 @@ from abc import ABC
 from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
 from pydantic import SecretStr
 
-from quartapp.approaches.keyword import KeyWord
-from quartapp.approaches.rag import RAG
-
+# from quartapp.approaches.keyword import KeyWord
 # from quartapp.approaches.rag import RAG
+
 from quartapp.approaches.utils import (
     chat_api,
     embeddings_api,
@@ -28,24 +27,24 @@ class OpenAISetup(ABC):
         self._chat_api = chat_api
 
 
-# class DatabaseSetup(ABC):
-#     def __init__(
-#         self,
-#         connection_string: str,
-#         database_name: str,
-#         collection_name: str,
-#         index_name: str,
-#         vector_store_api: AzureCosmosDBVectorSearch,
-#         users_collection: Collection,
-#         data_collection: Collection,
-#     ):
-#         self._connection_string = connection_string
-#         self._database_name = database_name
-#         self._collection_name = collection_name
-#         self._index_name = index_name
-#         self._vector_store_api = vector_store_api
-#         self._users_collection = users_collection
-#         self._data_collection = data_collection
+class DatabaseSetup(ABC):
+    def __init__(
+        self,
+        connection_string: str,
+        database_name: str,
+        collection_name: str,
+        index_name: str,
+        vector_store_api: AzureCosmosDBVectorSearch,
+        users_collection: Collection,
+        data_collection: Collection,
+    ):
+        self._connection_string = connection_string
+        self._database_name = database_name
+        self._collection_name = collection_name
+        self._index_name = index_name
+        self._vector_store_api = vector_store_api
+        self._users_collection = users_collection
+        self._data_collection = data_collection
 
 
 class Setup(ABC):
@@ -55,10 +54,10 @@ class Setup(ABC):
         openai_embeddings_deployment: str,
         openai_chat_model: str,
         openai_chat_deployment: str,
-        # connection_string: str,
-        # database_name: str,
-        # collection_name: str,
-        # index_name: str,
+        connection_string: str,
+        database_name: str,
+        collection_name: str,
+        index_name: str,
         api_key: SecretStr,
         api_version: str,
         azure_endpoint: str,
@@ -101,19 +100,19 @@ class Setup(ABC):
         #     chat=self._openai_setup._chat_api,
         #     data_collection=self._database_setup._data_collection,
         # )
-        self.rag = RAG(
-            # vector_store=None,# self._database_setup._vector_store_api,
-            embedding=self._openai_setup._embeddings_api,
-            chat=self._openai_setup._chat_api,
-            # data_collection=None#self._database_setup._data_collection,
-        )
+        # self.rag = RAG(
+        #     # vector_store=None,# self._database_setup._vector_store_api,
+        #     embedding=self._openai_setup._embeddings_api,
+        #     chat=self._openai_setup._chat_api,
+        #     # data_collection=None#self._database_setup._data_collection,
+        # )
         # self.keyword = KeyWord(
         #     vector_store=self._database_setup._vector_store_api,
         #     embedding=self._openai_setup._embeddings_api,
         #     chat=self._openai_setup._chat_api,
         #     data_collection=self._database_setup._data_collection,
         # )
-        self.keyword = KeyWord(
-            embedding=self._openai_setup._embeddings_api,
-            chat=self._openai_setup._chat_api,
-        )
+        # self.keyword = KeyWord(
+        #     embedding=self._openai_setup._embeddings_api,
+        #     chat=self._openai_setup._chat_api,
+        # )

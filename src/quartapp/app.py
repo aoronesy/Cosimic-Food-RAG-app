@@ -39,8 +39,9 @@ def create_app(test_config: dict[str, Any] | None = None) -> Quart:
 
     available_approaches = {
         # "vector": app_config.run_vector,
-        "rag": app_config.run_rag,
+        # "rag": app_config.run_rag,
         # "keyword": app_config.run_keyword,
+        "gpt4o": app_config.run_gpt4o,
     }
 
     @app.route("/")
@@ -84,12 +85,12 @@ def create_app(test_config: dict[str, Any] | None = None) -> Quart:
 
         # Get the overrides from the context
         override = context.get("overrides", {})
-        # retrieval_mode: str = override.get("retrieval_mode", "rag")
+        retrieval_mode: str = override.get("retrieval_mode", "vector")
         temperature: float = override.get("temperature", 0.3)
         top: int = override.get("top", 3)
         score_threshold: float = override.get("score_threshold", 0.5)
 
-        if approach := available_approaches.get("rag"):  # retrieval_mode):
+        if approach := available_approaches.get(retrieval_mode):
             response: RetrievalResponse = await approach(
                 session_state=session_state,
                 messages=messages,
