@@ -41,7 +41,7 @@ def create_app(test_config: dict[str, Any] | None = None) -> Quart:
         # "vector": app_config.run_vector,
         # "rag": app_config.run_rag,
         # "keyword": app_config.run_keyword,
-        "gpt4o": app_config.run_gpt,
+        "gpt": app_config.run_gpt,
     }
 
     @app.route("/")
