@@ -181,7 +181,7 @@ class AppConfig(AppConfigBase):
     #         new_session_state=new_session_state,
     #     )
 
-    async def run_gpt4o(
+    async def run_gpt(
         self, session_state: str | None, messages: list, temperature: float, limit: int, score_threshold: float
     ) -> RetrievalResponse:
 
@@ -207,7 +207,7 @@ class AppConfig(AppConfigBase):
                 data_points=[],
                 thoughts=[
                     Thought(description=messages[-1]["content"], title="User Query"),
-                    Thought(description="純粋なGPT-4o応答", title="GPT-4o Direct Response"),
+                    Thought(description="純粋なGPT応答", title="GPT Direct Response"),
                 ],
             )
 
@@ -216,8 +216,8 @@ class AppConfig(AppConfigBase):
             return RetrievalResponse(context, message, new_session_state)
 
         except Exception as e:
-            error_message = f"Error calling GPT-4o directly: {str(e)}"
-            print(f"GPT-4o Error: {error_message}")  # デバッグ用
+            error_message = f"Error calling GPT directly: {str(e)}"
+            print(f"GPT Error: {error_message}")  # デバッグ用
             return RetrievalResponse(
                 sessionState=new_session_state,
                 context=Context([DataPoint()], [Thought(description=error_message, title="Error")]),

@@ -1,7 +1,9 @@
 from abc import ABC
 
+from langchain_community.vectorstores import AzureCosmosDBVectorSearch
 from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
 from pydantic import SecretStr
+from pymongo.collection import Collection
 
 # from quartapp.approaches.keyword import KeyWord
 # from quartapp.approaches.rag import RAG
