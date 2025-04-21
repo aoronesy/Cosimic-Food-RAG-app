@@ -20,19 +20,12 @@ param vnetIntegration bool = false
 @description('webApp HealthCeck Path')
 param healthCheckPath string = ''
 
-var mongoClusterName = 'cosmon-${uniqueString(resourceGroup.id)}'
-var mongoAdminUser = 'admin${uniqueString(resourceGroup.id)}'
-@secure()
-@description('Mongo Server administrator password')
-param mongoAdminPassword string
-
-@description('SKU to use for Cosmos DB for MongoDB vCore Plan')
-param mongoServiceSku string
-
 param openAIDeploymentName string = 'oai-${name}'
 param chatGptDeploymentName string = 'chat-gpt'
 param chatGptDeploymentCapacity int = 6
 param chatGptModelName string = 'gpt-35-turbo'
+param documentIntelligenceDeploymentName string = 'documentintelligence-${name}'
+
 /*
 The version of the model to use. This should be updated to the latest version available.
 For more information, see:
@@ -42,7 +35,6 @@ param chatGptModelVersion string = '0125'
 param embeddingDeploymentName string = 'text-embedding'
 param embeddingDeploymentCapacity int = 30
 param embeddingModelName string = 'text-embedding-ada-002'
-
 param platformSubscriptionId string = ''
 param lawRgName string = ''
 param lawName string = ''
@@ -142,6 +134,19 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
   }
 }
 
+module documentIntelligence 'core/ai/documentInteligence.bicep' = {
+  name: 'documentinteligence'
+  scope: resourceGroup
+  params: {
+    name: documentIntelligenceDeploymentName
+    location: location
+    tags: tags
+    vnetId: vnetIntegration ? vnet.outputs.vnetId : ''
+    logAnalyticsWorkspaceId: !empty(platformSubscriptionId) ? monitoringResource.outputs.logAnalyticsWorkspaceId : ''
+    subnetId: vnetIntegration ? vnet.outputs.pepSubnetId : ''
+  }
+}
+
 module cognitiveServiceSecret './app/key-vault-secrets.bicep' = {
   name: 'keyvaultsecret-cognitiveservice'
   scope: resourceGroup
@@ -168,35 +173,6 @@ module appServicePlan 'core/host/appserviceplan.bicep' = {
   }
 }
 
-module mongoCluster 'core/database/cosmos/mongo/cosmos-mongo-cluster.bicep' = {
-  name: 'mongoCluster'
-  scope: resourceGroup
-  params: {
-    name: mongoClusterName
-    location: location
-    tags: tags
-    administratorLogin: mongoAdminUser
-    administratorLoginPassword: mongoAdminPassword
-    storage: 32
-    nodeCount: 1
-    sku: mongoServiceSku
-    allowAzureIPsFirewall: true
-    logAnalyticsWorkspaceId: !empty(platformSubscriptionId) ? monitoringResource.outputs.logAnalyticsWorkspaceId : ''
-    vnetId: vnetIntegration ? vnet.outputs.vnetId : ''
-    subnetId: vnetIntegration ? vnet.outputs.pepSubnetId : ''
-  }
-}
-
-module keyVaultSecrets './core/security/keyvault-secret.bicep' = {
-  dependsOn: [mongoCluster]
-  name: 'keyvault-secret-mongo-password'
-  scope: resourceGroup
-  params: {
-    name: 'mongoAdminPassword'
-    keyVaultName: keyVault.outputs.name
-    secretValue: mongoAdminPassword
-  }
-}
 
 module web 'core/host/appservice.bicep' = {
   name: 'appservice'
@@ -219,7 +195,6 @@ module web 'core/host/appservice.bicep' = {
     applicationInsightsName: !empty(platformSubscriptionId) ? monitoringResource.outputs.applicationInsightsName : ''
     logAnalyticsWorkspaceId: !empty(platformSubscriptionId) ? monitoringResource.outputs.logAnalyticsWorkspaceId : ''
     actionGroupId: !empty(platformSubscriptionId) ? monitoringResource.outputs.actionGroupId : ''
-    mongoClusterName: mongoClusterName
     openAIDeploymentName: openAIDeploymentName
     appSettings: {
       AZURE_OPENAI_DEPLOYMENT_NAME: openAIDeploymentName
@@ -229,12 +204,6 @@ module web 'core/host/appservice.bicep' = {
       AZURE_OPENAI_EMBEDDINGS_MODEL_NAME: embeddingModelName
       AZURE_OPENAI_EMBEDDINGS_DEPLOYMENT_NAME: embeddingDeploymentName
       AZURE_OPENAI_API_KEY: '@Microsoft.KeyVault(VaultName=${keyVault.outputs.name};SecretName=cognitiveServiceKey)'
-      AZURE_COSMOS_PASSWORD: '@Microsoft.KeyVault(VaultName=${keyVault.outputs.name};SecretName=mongoAdminPassword)'
-      AZURE_COSMOS_CONNECTION_STRING: mongoCluster.outputs.connectionStringKey
-      AZURE_COSMOS_USERNAME: mongoAdminUser
-      AZURE_COSMOS_DATABASE_NAME: 'CosmicDB'
-      AZURE_COSMOS_COLLECTION_NAME: 'CosmicFoodCollection'
-      AZURE_COSMOS_INDEX_NAME: 'CosmicIndex'
     }
   }
 }
@@ -256,9 +225,6 @@ module functions 'core/host/functions.bicep' = {
     tags: tags
     hostingPlanId: appServicePlan.outputs.id
     applicationInsightsName: !empty(platformSubscriptionId) ? monitoringResource.outputs.applicationInsightsName : ''
-    mongoConnectionString: mongoCluster.outputs.connectionStringKey
-    azureCosmosPassword: '@Microsoft.KeyVault(VaultName=${keyVault.outputs.name};SecretName=mongoAdminPassword)'
-    azureCosmosUsername: mongoAdminUser
     azureOpenAiApiKey: '@Microsoft.KeyVault(VaultName=${keyVault.outputs.name};SecretName=cognitiveServiceKey)'
     azureOpenAiEndpoint: openAi.outputs.endpoint
     azureOpenAiDeploymentName: openAIDeploymentName
