@@ -5,16 +5,18 @@ from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
 from pydantic import SecretStr
 from pymongo.collection import Collection
 
-from quartapp.approaches.keyword import KeyWord
-from quartapp.approaches.rag import RAG
+# from quartapp.approaches.keyword import KeyWord
+# from quartapp.approaches.rag import RAG
+
 from quartapp.approaches.utils import (
     chat_api,
     embeddings_api,
-    setup_data_collection,
-    setup_users_collection,
-    vector_store_api,
 )
-from quartapp.approaches.vector import Vector
+
+# setup_data_collection,
+# setup_users_collection,
+# vector_store_api,
+# from quartapp.approaches.vector import Vector
 
 
 class OpenAISetup(ABC):
@@ -78,37 +80,41 @@ class Setup(ABC):
                 azure_endpoint,
             ),
         )
-        self._database_setup = DatabaseSetup(
-            connection_string=connection_string,
-            database_name=database_name,
-            collection_name=collection_name,
-            index_name=index_name,
-            vector_store_api=vector_store_api(
-                connection_string=connection_string,
-                namespace=f"{database_name}.{collection_name}",
-                embedding=self._openai_setup._embeddings_api,
-            ),
-            users_collection=setup_users_collection(connection_string=connection_string, database_name=database_name),
-            data_collection=setup_data_collection(
-                connection_string=connection_string, database_name=database_name, collection_name=collection_name
-            ),
-        )
+        # self._database_setup = DatabaseSetup(
+        #     connection_string=connection_string,
+        #     database_name=database_name,
+        #     collection_name=collection_name,
+        #     index_name=index_name,
+        #     vector_store_api=vector_store_api(
+        #         connection_string=connection_string,
+        #         namespace=f"{database_name}.{collection_name}",
+        #         embedding=self._openai_setup._embeddings_api,
+        #     ),
+        #     users_collection=setup_users_collection(connection_string=connection_string, database_name=database_name),
+        #     data_collection=setup_data_collection(
+        #         connection_string=connection_string, database_name=database_name, collection_name=collection_name
+        #     ),
+        # )
 
-        self.vector_search = Vector(
-            vector_store=self._database_setup._vector_store_api,
-            embedding=self._openai_setup._embeddings_api,
-            chat=self._openai_setup._chat_api,
-            data_collection=self._database_setup._data_collection,
-        )
-        self.rag = RAG(
-            vector_store=self._database_setup._vector_store_api,
-            embedding=self._openai_setup._embeddings_api,
-            chat=self._openai_setup._chat_api,
-            data_collection=self._database_setup._data_collection,
-        )
-        self.keyword = KeyWord(
-            vector_store=self._database_setup._vector_store_api,
-            embedding=self._openai_setup._embeddings_api,
-            chat=self._openai_setup._chat_api,
-            data_collection=self._database_setup._data_collection,
-        )
+        # self.vector_search = Vector(
+        #     vector_store=self._database_setup._vector_store_api,
+        #     embedding=self._openai_setup._embeddings_api,
+        #     chat=self._openai_setup._chat_api,
+        #     data_collection=self._database_setup._data_collection,
+        # )
+        # self.rag = RAG(
+        #     # vector_store=None,# self._database_setup._vector_store_api,
+        #     embedding=self._openai_setup._embeddings_api,
+        #     chat=self._openai_setup._chat_api,
+        #     # data_collection=None#self._database_setup._data_collection,
+        # )
+        # self.keyword = KeyWord(
+        #     vector_store=self._database_setup._vector_store_api,
+        #     embedding=self._openai_setup._embeddings_api,
+        #     chat=self._openai_setup._chat_api,
+        #     data_collection=self._database_setup._data_collection,
+        # )
+        # self.keyword = KeyWord(
+        #     embedding=self._openai_setup._embeddings_api,
+        #     chat=self._openai_setup._chat_api,
+        # )

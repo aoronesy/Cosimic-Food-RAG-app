@@ -13,13 +13,13 @@ interface Props {
 }
 
 export const VectorSettings = ({ updateRetrievalMode, defaultRetrievalMode }: Props) => {
-    const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
+    const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.GPT);
     const retrievalModeId = useId("retrievalMode");
     const retrievalModeFieldId = useId("retrievalModeField");
 
     const onRetrievalModeChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<RetrievalMode> | undefined) => {
-        setRetrievalMode(option?.data || RetrievalMode.Hybrid);
-        updateRetrievalMode(option?.data || RetrievalMode.Hybrid);
+        setRetrievalMode(option?.data || RetrievalMode.GPT);
+        updateRetrievalMode(option?.data || RetrievalMode.GPT);
     };
 
     return (
@@ -28,11 +28,7 @@ export const VectorSettings = ({ updateRetrievalMode, defaultRetrievalMode }: Pr
                 id={retrievalModeFieldId}
                 label="検索モード"
                 selectedKey={defaultRetrievalMode.toString()}
-                options={[
-                    { key: "rag", text: "RAG with Vector Search", selected: retrievalMode == RetrievalMode.Hybrid, data: RetrievalMode.Hybrid },
-                    { key: "vector", text: "Vector Search", selected: retrievalMode == RetrievalMode.Vectors, data: RetrievalMode.Vectors },
-                    { key: "keyword", text: "Keyword Search", selected: retrievalMode == RetrievalMode.Text, data: RetrievalMode.Text }
-                ]}
+                options={[{ key: "gpt", text: "GPTでの評価", selected: retrievalMode == RetrievalMode.GPT, data: RetrievalMode.GPT }]}
                 required
                 onChange={onRetrievalModeChange}
                 aria-labelledby={retrievalModeId}

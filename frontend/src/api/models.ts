@@ -3,7 +3,8 @@ import { AIChatCompletion, AIChatCompletionDelta, AIChatCompletionOperationOptio
 export const enum RetrievalMode {
     Hybrid = "rag",
     Vectors = "vector",
-    Text = "keyword"
+    Text = "keyword",
+    GPT = "gpt"
 }
 
 export type ChatAppRequestOverrides = {
